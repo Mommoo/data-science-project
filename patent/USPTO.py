@@ -11,53 +11,49 @@ import urllib.parse as encoder
 # @author mommoo
 # @date 2018. 06. 02.
 
-class PatentAnalyzer:
+
+class USPTOPatentAnalyzer:
     __LIST_COUNT = 50  # the count of web-page
     __BASIC_URL_PATTERN = ('http://patft.uspto.gov/netacgi/nph-Parser' +  # the basic pattern url of USPTO-patent
                            '?Sect1=PTO2&Sect2=HITOFF&u=/netahtml/PTO/search-adv.htm&r=0&p=%d&f=S&l=%d&Query=%s&d=PTXT')
 
+    # @arg :
+    #   query : search data of patent
+    #   default_total_size : temporary number of the total number of patent
+    def __init__(self, query, default_total_size) -> None:
+        self.__encoded_query = encoder.quote(query)
+        self.__total_patent_count = self.__try_find_total_patent_count(default_total_size)
+
     # @description :
     #   it is try to finding the total count of patent through web-page crawling
     # @arg :
-    #   encoded_query : encoded query input by user
+    #   default_cont  : temporary number of the total number of patent
     # @return type : int
-    @classmethod
-    def __try_find_total_patent_count(cls, encoded_query) -> int:
-        url_for_max_patent_count = cls.__BASIC_URL_PATTERN % (1, 1, encoded_query)
 
+    def __try_find_total_patent_count(self, default_total_size) -> int:
+        url_for_max_patent_count = self.__BASIC_URL_PATTERN % (1, 1, self.__encoded_query)
+
+        print("try auto detect 'the total number of patent'...")
         crawler = handler.Crawler(url_for_max_patent_count)
 
         parser = crawler.get_beautiful_soup_parser()
         doc = parser.find_all("strong")
         if doc is None:
-            return -1
+            print("auto detect failed...")
+            return default_total_size
         else:
-            return int(doc[len(doc) - 1].get_text())
-
-    # @description :
-    #   if failed to finding the total number of patent, the number is replaced with temporary number user entered
-    # @arg :
-    #   encoded_query : encoded query input by user
-    #   default_cont  : temporary number of the total number of patent
-    # @return type : int
-    @classmethod
-    def __get_proper_total_patent_count(cls, encoded_query, default_count) -> int:
-        total_patent_count = PatentAnalyzer.__try_find_total_patent_count(encoded_query)
-        if total_patent_count == -1:
-            total_patent_count = default_count
-
-        return total_patent_count
+            total_patent_count = int(doc[len(doc) - 1].get_text())
+            print("auto detect success !! total number of patent is %d" % total_patent_count)
+            return total_patent_count
 
     # @description :
     #   it is try to finding the max count of web-page
-    # @arg :
-    #   total_patent_count : the total number of patent
     # @return type : int
-    @classmethod
-    def __get_max_page_count(cls, total_patent_count) -> int:
-        max_page_count = total_patent_count // cls.__LIST_COUNT
 
-        if total_patent_count % cls.__LIST_COUNT == 0:
+    def __get_max_page_count(self) -> int:
+        max_page_count = self.__total_patent_count // self.__LIST_COUNT
+
+        if self.__total_patent_count % self.__LIST_COUNT == 0:
             max_page_count = max_page_count+1
         else:
             max_page_count = max_page_count+2
@@ -65,20 +61,13 @@ class PatentAnalyzer:
 
     # @description :
     #   it is build url-list of USPTO-patent
-    # @arg :
-    #   query : search data of patent
-    #   default_count : temporary number of the total number of patent
-    # @return type : list of string-url
-    @classmethod
-    def get_patent_string_url_list(cls, query, default_count) -> list:
-        encoded_query = encoder.quote(query)
-        total_patent_count = PatentAnalyzer.__get_proper_total_patent_count(encoded_query, default_count)
-        total_patent_count = 40  # for test
+    # @return type : list of page-url
+    def get_patent_page_url_list(self) -> list:
         patent_string_url_list = []
-        max_page_count = PatentAnalyzer.__get_max_page_count(total_patent_count)
+        max_page_count = self.__get_max_page_count()
 
         for page_count in range(1, max_page_count):
-            patent_string_url = cls.__BASIC_URL_PATTERN % (page_count, cls.__LIST_COUNT, encoded_query)
+            patent_string_url = self.__BASIC_URL_PATTERN % (page_count, self.__LIST_COUNT, self.__encoded_query)
             patent_string_url_list.append(patent_string_url)
         return patent_string_url_list
 
@@ -87,31 +76,31 @@ class PatentAnalyzer:
     #   this information is consist of two property of patent-title, patent-number
     #   the two property were parsed from USPTO-patent
     # @arg :
-    #   query : search data of patent
-    #   default_count : temporary number of the total number of patent
-    # @return type : list of string-url
+    #   patent_url : patent url
+    # @return type : list of USPTOPatentProperty
     @classmethod
-    def build_patent_property_list(cls, patent_url_list):
+    def build_USPTO_patent_property_list(cls, patent_url):
         patent_property_list = []
 
-        for patent_url in patent_url_list:
+        parser = handler.Crawler(patent_url).get_beautiful_soup_parser()
 
-            parser = handler.Crawler(patent_url).get_beautiful_soup_parser()
+        table_td = parser.find_all('td', {"valign": "top"})
 
-            table_td = parser.find_all('td', {"valign": "top"})
+        patent_index = -1
 
-            patent_index = 0
+        for index, elem in enumerate(table_td):
+            position = index % 3
+            data = elem.string.strip()
 
-            for index, elem in enumerate(table_td):
-                position = index % 3
-                data = elem.string.strip()
-
-                if position == 0:
-                    patent_index = int(data) - 1
-                    patent_property_list.append(USPTOPatentProperty())
-                elif position == 1:
-                    patent_property_list[patent_index].number = data
-                elif position == 2:
-                    patent_property_list[patent_index].title = data
+            if position == 0:
+                patent_index += 1
+                patent_property_list.append(USPTOPatentProperty())
+            elif position == 1:
+                patent_property_list[patent_index].number = data
+            elif position == 2:
+                patent_property_list[patent_index].title = data
 
         return patent_property_list
+
+    def get_total_patent_count(self) -> int:
+        return self.__total_patent_count
