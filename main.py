@@ -80,6 +80,9 @@ def main():
         print("=======================================================")
         count += len(patent_property_list)
 
+        if count >= total_patent_count:
+            break
+
     patent_csv_file_handler.close()
     timer.end()
 
