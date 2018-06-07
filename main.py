@@ -71,6 +71,7 @@ def main():
             for future in as_completed(f):
                 property_list.extend(future.result())
 
+        print(property_list)
         patent_property_list = do_multi_process_crawling(property_list, count, total_patent_count)
         print("=======================================================")
         print('try to save csv files...')
@@ -78,9 +79,6 @@ def main():
         print('success save csv files...!!')
         print("=======================================================")
         count += len(patent_property_list)
-        cnt += 1
-        if cnt == 2:
-            break
 
     patent_csv_file_handler.close()
     timer.end()
