@@ -203,9 +203,16 @@ class PatentAnalyzer:
 
         for legal_event_tr_elem in legal_event_tr_elems:
             patent_legal_event = PatentLegalEvents()
-            title_td_elem = legal_event_tr_elem.find('td', {'itemprop': 'title'})
-            owner_name_span_elem = legal_event_tr_elem.find('span', {'itemprop': 'value'})
             date_time_elem = legal_event_tr_elem.find('time', {'itemprop': 'date'})
+            title_td_elem = legal_event_tr_elem.find('td', {'itemprop': 'title'})
+
+            owner_name_wrapping_p_elems = legal_event_tr_elem.find_all('p', {'itemprop': 'attributes'})
+            owner_name_span_elem = None
+
+            for owner_name_wrapping_p_elem in owner_name_wrapping_p_elems:
+                label_elem = owner_name_wrapping_p_elem.find('strong', {'itemprop': 'label'})
+                if PatentAnalyzer.__parse_text(label_elem) == 'Owner name':
+                    owner_name_span_elem = owner_name_wrapping_p_elem.find('span', {'itemprop': 'value'})
 
             patent_legal_event.title = PatentAnalyzer.__parse_text(title_td_elem)
             patent_legal_event.owner_name = PatentAnalyzer.__parse_text(owner_name_span_elem)

@@ -52,8 +52,6 @@ def main():
 
     count = 0
 
-    cnt = 0
-
     while(True):
         size = len(patent_page_url_list)
         pop_size = 10 if size > 10 else size
