@@ -22,6 +22,6 @@ class Timer:
     def get_start_time(self) -> str:
         return self.__printed_time
 
-    def get_take_time(self) -> str:
+    def get_taken_time(self) -> str:
         return Timer.__convert_to_time_format(self.__end_time - self.__start_time)
 

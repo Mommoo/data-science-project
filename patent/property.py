@@ -217,7 +217,7 @@ class PatentLegalEvents:
         self.__date = value
 
     def __str__(self) -> str:
-        return '\n(title : ' + self.__title + " , owner name : " + self.__owner_name + " )"
+        return '\n(date  : ' + self.__date + ', title : ' + self.__title + " , owner name : " + self.__owner_name + " )"
 
     def __repr__(self) -> str:
         return self.__str__()

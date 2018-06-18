@@ -1,3 +1,5 @@
+from typing import List
+
 import patent.handler as handler
 from patent.property import USPTOPatentProperty
 import urllib.parse as encoder
@@ -79,7 +81,7 @@ class USPTOPatentAnalyzer:
     #   patent_url : patent url
     # @return type : list of USPTOPatentProperty
     @classmethod
-    def build_USPTO_patent_property_list(cls, patent_url):
+    def build_USPTO_patent_property_list(cls, patent_url) -> List[USPTOPatentProperty]:
         patent_property_list = []
 
         parser = handler.Crawler(patent_url).get_beautiful_soup_parser()
