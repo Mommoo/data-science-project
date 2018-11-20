@@ -4,7 +4,7 @@ this project is crawling patent information using two urls
 (https://patents.google.com/patent/[patentNumber])
 
 
-# FlowChart(Korean)
+# Flow-Chart Diagram(Korean)
 <div>
   <img src='./crawling_flow_chart.png' />
 </div>
