@@ -14,7 +14,7 @@ this project is crawling patent information using two urls
 
 ### Download Python
 you need to download Python to run this project ([donwload Python](https://www.python.org/downloads/)).  
-*Note*) have to download Python version 3+
+**Note**) *have to download Python version 3+*
 
 ### Download BeautifulSoup Library
 this project need to beautifulsoup library  
