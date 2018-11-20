@@ -20,6 +20,7 @@ class HttpURLConnection:
     """
         :return 
     """
+
     # @description :
     #   try http connect if not try previously
     # @return type : None
@@ -32,7 +33,17 @@ class HttpURLConnection:
     #   set http response data ( content, status-code )
     # @return type : None
     def open_connection(self) -> None:
-        self.open_result = url_request.urlopen(self.string_url)
+        hdr = {
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_2 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13F69 Safari/601.1',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+            'Content-Type': 'text/plain',
+            'Accept-Encoding': 'none',
+            'Accept-Language': 'en-US,en;q=0.8',
+            'Connection': 'keep-alive'}
+
+        req = url_request.Request(self.string_url, headers=hdr)
+        self.open_result = url_request.urlopen(req)
 
         charset = self.open_result.info().get_content_charset()
         if charset is None:

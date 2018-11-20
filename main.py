@@ -9,7 +9,7 @@ from mommoo.timer import Timer
 from patent.property import USPTOPatentProperty
 
 QUERY = 'CPCL/G06Q and ISD/1/1/2005->1/1/2017'
-DIR_PATH = 'C:\\Users\\mommoo.DESKTOP-Q7JLIUA\\Desktop\\test'
+DIR_PATH = 'C:\\Users\\mommoo.DESKTOP-Q7JLIUA\\Desktop\\repository'
 DEFAULT_PATENT_COUNT = 1024
 
 
@@ -44,12 +44,11 @@ def do_multi_process_google_crawling(USPTO_patent_property_list, progress_count,
 
 
 def main():
-    patent_csv_file_handler = PatentCSVFileHandler(DIR_PATH)
-
     timer = Timer()
     timer.start()
     print("crawler start... start time is %s" % timer.get_start_time())
 
+    patent_csv_file_handler = PatentCSVFileHandler(DIR_PATH)
     patent_csv_file_handler.open()
     print("csv files created... ")
 
@@ -82,7 +81,7 @@ def main():
                 sub_USPTO_patent_property_list = completed_future.result()
                 main_USPTO_patent_property_list.extend(sub_USPTO_patent_property_list)
 
-        print(main_USPTO_patent_property_list)
+        # print(main_USPTO_patent_property_list)
         patent_property_list = do_multi_process_google_crawling(main_USPTO_patent_property_list, count, total_patent_count)
         print("=======================================================")
         print('try to save csv files...')
@@ -95,7 +94,6 @@ def main():
     timer.end()
 
     print("all tasks are done!! taken time is %s" % timer.get_taken_time())
-
 
 if __name__ == '__main__':
     main()
