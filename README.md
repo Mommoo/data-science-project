@@ -1,6 +1,6 @@
 # Data-Science-Project
-this project is crawling patent information using two urls
-(http://patft.uspto.gov/netacgi/nph-Parser?Sect1=PTO2&Sect2=HITOFF&u=/netahtml/PTO/search-adv.htm&r=0&p=1&f=S&l=1&Query=CPCL/G06Q%20and%20ISD/1/1/2005-%3E1/1/2017&d=PTXT),
+this project is crawling patent information using two urls  
+(http://patft.uspto.gov/netacgi/nph-Parser?Sect1=PTO2&Sect2=HITOFF&u=/netahtml/PTO/search-adv.htm&r=0&p=1&f=S&l=1&Query=CPCL/G06Q%20and%20ISD/1/1/2005-%3E1/1/2017&d=PTXT),  
 (https://patents.google.com/patent/[patentNumber])
 
 
